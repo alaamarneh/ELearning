@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ala.elearning">
+
+    <application
+        android:name=".Core.FireApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme">
+
+        </activity>
+        <activity
+            android:name=".SecondActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".SessionActivity" />
+        <activity android:name=".activities.DashboardActivity" />
+        <activity
+            android:name=".activities.CoursesListActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.CourseDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.ExamResultsListActivity" />
+        <activity
+            android:name=".activities.MessageDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.MessagesListActivity" />
+        <activity
+            android:name=".activities.HomeworkDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.HomeworkListActivity" />
+        <activity android:name=".activities.ExamActivity" />
+        <activity android:name=".activities.ExamsListActivity" />
+        <activity android:name=".activities.addMessageActivity" />
+        <activity android:name=".activities.abstractActivities.EmptyActivity"></activity>
+        <activity android:name=".SplashActivity" android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+
+</manifest>
