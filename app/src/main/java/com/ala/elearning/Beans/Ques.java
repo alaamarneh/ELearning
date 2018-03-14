@@ -9,9 +9,9 @@ import java.util.List;
 
 public class Ques {
     private List<Choice> choices;
-    private int id,sid;
+    private int id,course_id,category;
     private String imageurl;
-    private String text;
+    private String text,explanation;
 
     public String getCreated() {
         return created;
@@ -39,12 +39,28 @@ public class Ques {
         this.id = id;
     }
 
-    public int getSid() {
-        return sid;
+    public int getCourse_id() {
+        return course_id;
     }
 
-    public void setSid(int sid) {
-        this.sid = sid;
+    public void setCourse_id(int course_id) {
+        this.course_id = course_id;
+    }
+
+    public int getCategory() {
+        return category;
+    }
+
+    public void setCategory(int category) {
+        this.category = category;
+    }
+
+    public String getExplanation() {
+        return explanation;
+    }
+
+    public void setExplanation(String explanation) {
+        this.explanation = explanation;
     }
 
     public String getImageurl() {

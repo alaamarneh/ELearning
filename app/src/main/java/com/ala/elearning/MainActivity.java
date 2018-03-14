@@ -25,26 +25,26 @@ public class MainActivity extends AppCompatActivity {
 
 
         EditText txtId = findViewById(R.id.txtId);
-        EditText txtPassword = findViewById(R.id.txtPassword);
+//        EditText txtPassword = findViewById(R.id.txtPassword);
 
         if(TextUtils.isEmpty(txtId.getText())){
             txtId.setError("Enter your id");
             txtId.requestFocus();
         }
-        if(TextUtils.isEmpty(txtPassword.getText())){
-            txtPassword.setError("Enter your password");
-            txtPassword.requestFocus();
-        }
+//        if(TextUtils.isEmpty(txtPassword.getText())){
+//            txtPassword.setError("Enter your password");
+//            txtPassword.requestFocus();
+//        }
 
-        if(TextUtils.isEmpty(txtPassword.getText()) || TextUtils.isEmpty(txtId.getText()))
-            return;
+//        if(TextUtils.isEmpty(txtPassword.getText()) || TextUtils.isEmpty(txtId.getText()))
+//            return;
         String id = txtId.getText().toString();
-        String password = txtPassword.getText().toString();
+//        String password = txtPassword.getText().toString();
 
         // save user
         User user = new User();
         user.setId(id);
-        user.setPassword(password);
+//        user.setPassword(password);
         SPController.saveLocalUser(this,user);
 
         Intent i = new Intent(this,DashboardActivity.class);

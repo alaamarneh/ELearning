@@ -20,6 +20,7 @@ import java.util.List;
  */
 
 public interface API {
+    String ApiUrl = "http://ec2-18-219-107-164.us-east-2.compute.amazonaws.com/api_elearn/api_elearn/";
     void getAvailableCourses(IResponseTriger<List<Course>> triger);
     void getAvaiableExams(Course course, IResponseTriger<List<Exam>> triger);
     void getExamResults(Course course, IResponseTriger<List<Exam>> triger);

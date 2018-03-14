@@ -41,7 +41,7 @@ public class MessagesListFragment extends ListFragment implements IResponseTrige
     @Override
     public void setupRecyclerViewAdapter() {
 
-        API api = WebApi.getInstance(getActivity());
+        API api = WebApi.getInstance();
         Course course = getArguments().getParcelable(MessagesListActivity.ARG_COURSE);
         api.getMessages(course,this);
         mSwipeRefreshLayout.setRefreshing(true);

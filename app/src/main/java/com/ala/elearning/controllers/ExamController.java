@@ -16,7 +16,7 @@ import java.util.Map;
  */
 
 public class ExamController {
-    public static List<Submission> generateSubmissions(Context context, List<Ques> questions, Map<Integer,Choice> map){
+    public static List<Submission> generateSubmissions(Context context, List<Ques> questions, Map<Integer,Choice> map, int exam_id){
         ArrayList<Submission> submissions = new ArrayList<>();
         User user = SPController.loadLocalUser(context);
         for (Ques q :
@@ -27,7 +27,8 @@ public class ExamController {
 
                 Choice choice = map.get(q.getId());
                 s.setCid(choice.getId());
-                s.setQ_id(q.getId());
+                s.setQid(q.getId());
+                s.setExam_id(exam_id);
                 submissions.add(s);
 
                 if(user!=null){

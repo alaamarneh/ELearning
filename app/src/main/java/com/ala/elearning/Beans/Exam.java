@@ -10,9 +10,9 @@ import java.util.Date;
  */
 
 public class Exam implements Parcelable{
-    public static final int STATUS_NEW = 1;
+    public static final int STATUS_NEW = 0;
     public static final int STATUS_COMPLETED = 2;
-
+    public static final int STATUS_NOT_ACTIVE = 1;
     public Exam() {
     }
 
@@ -21,6 +21,11 @@ public class Exam implements Parcelable{
     private Date endDate;
     private String paragraph;
 
+    private String name;
+    private double mark;
+    private int maxMark;
+    private Course course;
+    private int status;
     public String getParagraph() {
         return paragraph;
     }
@@ -61,11 +66,6 @@ public class Exam implements Parcelable{
         this.endDate = endDate;
     }
 
-    private String name;
-    private double mark;
-    private int maxMark;
-    private Course course;
-    private int status;
 
     public int getStatus() {
         return status;
@@ -129,6 +129,8 @@ public class Exam implements Parcelable{
                 return "NEW";
             case STATUS_COMPLETED:
                 return "COMPLETED";
+            case STATUS_NOT_ACTIVE:
+                return "Inactive";
         }
 
         return null;

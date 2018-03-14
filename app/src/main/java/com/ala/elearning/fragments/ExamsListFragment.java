@@ -42,7 +42,7 @@ public class ExamsListFragment extends ListFragment  implements IResponseTriger<
     }
     @Override
     public void setupRecyclerViewAdapter() {
-        API api = WebApi.getInstance(getActivity());
+        API api = WebApi.getInstance();
         Course course = getArguments().getParcelable(ExamsListActivity.ARG_COURSE);
         api.getAvaiableExams(course,this);
         mSwipeRefreshLayout.setRefreshing(true);

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,10 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ala.elearning.API.API;
+import com.ala.elearning.API.WebApi;
 import com.ala.elearning.API.WebDummy;
 import com.ala.elearning.Adapters.ChoicesAdapter;
 import com.ala.elearning.Beans.Choice;
@@ -38,6 +41,7 @@ import java.util.Map;
 
 public class ExamActivity extends AppCompatActivity implements IResponseTriger<RunningExam>{
 
+
     private static final String ARG_EXAM = "exam";
     private Exam mExam;
     private RecyclerView mRecyclerView;
@@ -49,7 +53,7 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
     private TextView mTextViewSessionName;
     private TextView tvEndDate;
     private MyAdapter myAdapter;
-    private API api = WebDummy.getInstance(this);
+    private API api = WebApi.getInstance();
     private ProgressDialog mProgressDialog;
     private RunningExam mRunningExam;
     public static Intent getIntent(Context ctx, Exam exam){
@@ -61,7 +65,6 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam);
-
         mExam = getIntent().getParcelableExtra(ARG_EXAM);
 
         mRecyclerView = findViewById(R.id.rv);
@@ -70,6 +73,7 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
         mTextViewParagraph = findViewById(R.id.tvParagraph);
         mTextViewSessionName = findViewById(R.id.tvSessionNamae);
         tvEndDate = findViewById(R.id.tvEndDate);
+
 
         mButtonSubmit = findViewById(R.id.btnSubmit);
         mButtonSubmit.setVisibility(View.GONE);
@@ -182,7 +186,7 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
 
     class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> implements ITriger<Choice>{
         private List<Ques> questions;
-        private Map<Integer,Choice> mapAnswers = new HashMap<>();
+        private Map<Integer,Choice> mapAnswers = new HashMap<>();// integer => Qid, Choice
         private Boolean showAnswers = false;
         public MyAdapter(List<Ques> questions) {
             this.questions = questions;
@@ -192,7 +196,7 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
             notifyDataSetChanged();
         }
         public List<Submission> getSubmissions(){
-            return ExamController.generateSubmissions(ExamActivity.this,questions,mapAnswers);
+            return ExamController.generateSubmissions(ExamActivity.this,questions,mapAnswers,mRunningExam.getExam().getId());
         }
         public int calculateResult(){
             int c =0;
@@ -220,11 +224,13 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
         @Override
         public void onBindViewHolder(MyAdapter.MyHolder holder, final int position) {
             final Ques q = questions.get(position);
-            holder.bind(q,position);
+            holder.bind(q,position,showAnswers);
 
             if(q.getChoices() != null)
                 holder.setAdapter(new ChoicesAdapter(q.getChoices(),this,showAnswers));
         }
+
+        // for speaking (the text to speech)
         String getText(Ques q,int p){
             StringBuilder a = new StringBuilder("Question ").append(p+1).append(q.getText());
             int i=0;
@@ -240,6 +246,7 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
             return questions.size();
         }
 
+        //when choose a choice
         @Override
         public void onResponse(Choice response) {
             mapAnswers.put(response.getQid(),response);
@@ -251,8 +258,11 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
         }
 
         class MyHolder extends RecyclerView.ViewHolder{
-            private TextView mTextViewText, tvQuestionNumber;
+            private TextView mTextViewText, tvQuestionNumber,tvExplanation;
             private RecyclerView mRecyclerView;
+            private LinearLayout linearLayout;
+            private View layoutExplanation;
+
             View mButtonPlay,btnStop;
 
             public MyHolder(View itemView) {
@@ -262,13 +272,20 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
                 tvQuestionNumber = itemView.findViewById(R.id.tvQuestionNumber);
                 mButtonPlay = itemView.findViewById(R.id.btnPlay);
                 btnStop = itemView.findViewById(R.id.btnStop);
+                linearLayout = itemView.findViewById(R.id.linearLayout);
+                tvExplanation = itemView.findViewById(R.id.tvExplanation);
+                layoutExplanation = itemView.findViewById(R.id.layoutExplanation);
+
+
                 mRecyclerView.setHasFixedSize(true);
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
 
             }
-            public void bind(final Ques ques, final int position){
+            public void bind(final Ques ques, final int position, boolean showAnswers){
                 tvQuestionNumber.setText("Q" + (position+1));
                 mTextViewText.setText(ques.getText());
+                tvExplanation.setText(ques.getExplanation());
+
 
                 mButtonPlay.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -285,7 +302,16 @@ public class ExamActivity extends AppCompatActivity implements IResponseTriger<R
                         btnStop.setVisibility(View.GONE);
                     }
                 });
+
+                if(showAnswers) {
+                    linearLayout.setBackgroundColor(mapAnswers.get(ques.getId()).getStatus() == Choice.STATUS_CORRECT ?
+                            Color.GREEN : Color.RED);
+                    layoutExplanation.setVisibility(View.VISIBLE);
+                }else{
+                    layoutExplanation.setVisibility(View.GONE);
+                }
             }
+
             void setAdapter(ChoicesAdapter choicesAdapter){mRecyclerView.setAdapter(choicesAdapter);}
         }
     }

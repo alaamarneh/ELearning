@@ -5,7 +5,7 @@ package com.ala.elearning.Beans;
  */
 
 public class Submission {
-    private int id,cid,q_id;
+    private int id,cid,qid,exam_id;
     private String uid;
 
     public String getUname() {
@@ -18,12 +18,20 @@ public class Submission {
 
     private String uname;
 
-    public int getQ_id() {
-        return q_id;
+    public int getQid() {
+        return qid;
     }
 
-    public void setQ_id(int q_id) {
-        this.q_id = q_id;
+    public void setQid(int qid) {
+        this.qid = qid;
+    }
+
+    public int getExam_id() {
+        return exam_id;
+    }
+
+    public void setExam_id(int exam_id) {
+        this.exam_id = exam_id;
     }
 
     public int getId() {
@@ -56,8 +64,8 @@ public class Submission {
                 "'id':" + id +
                 ", 'cid':" + cid +
                 ", 'uid':" + uid +
-                ", 'q_id':" + q_id +
-                ", 'uname':" + uname +
+                ", 'qid':" + qid +
+                ", 'exam_id':" + exam_id +
                 '}';
     }
 }

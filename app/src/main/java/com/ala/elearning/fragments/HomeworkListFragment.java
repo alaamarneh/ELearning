@@ -39,7 +39,7 @@ public class HomeworkListFragment extends ListFragment  implements IResponseTrig
     }
     @Override
     public void setupRecyclerViewAdapter() {
-        API api = WebApi.getInstance(getActivity());
+        API api = WebApi.getInstance();
         Course course = getArguments().getParcelable(HomeworkListActivity.ARG_COURSE);
         api.getHomeworks(course,this);
         mSwipeRefreshLayout.setRefreshing(true);

@@ -126,7 +126,7 @@ public class SessionActivity extends AppCompatActivity implements ITriger<Choice
                 Choice choice = map.get(q.getId());
                 s.setCid(choice.getId());
                 s.setUid(mId);
-                s.setQ_id(q.getId());
+//                s.setQ_id(q.getId());
                 s.setUname(mName);
                 submissions.add(s);
             }

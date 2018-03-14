@@ -36,7 +36,7 @@ public class ExamResultsListFragment extends ListFragment implements IResponseTr
     }
     @Override
     public void setupRecyclerViewAdapter() {
-        API api = WebApi.getInstance(getContext());
+        API api = WebApi.getInstance();
         mSwipeRefreshLayout.setRefreshing(true);
         api.getExamResults(getCourse(),this);
     }

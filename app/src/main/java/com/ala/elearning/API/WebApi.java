@@ -3,6 +3,7 @@ package com.ala.elearning.API;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import com.ala.elearning.Beans.Course;
 import com.ala.elearning.Beans.Exam;
@@ -15,6 +16,7 @@ import com.ala.elearning.Beans.User;
 import com.ala.elearning.IResponseTriger;
 import com.ala.elearning.controllers.SPController;
 import com.ala.elearning.util.DateDeserializer;
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -26,11 +28,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by alaam on 1/6/2018.
@@ -40,9 +45,12 @@ public class WebApi implements API {
     private static WebApi instance;
     private Context mContext;
     private RequestQueue requestQueue;
-    public static WebApi getInstance(Context context) {
+
+    public static void init(Context context){
         if(instance == null)
             instance = new WebApi(context);
+    }
+    public static WebApi getInstance() {
         return instance;
     }
 
@@ -53,13 +61,12 @@ public class WebApi implements API {
     @Override
     public void getAvailableCourses(final IResponseTriger<List<Course>> triger) {
         User user = SPController.loadLocalUser(mContext);
-        String url = "http://alamamoon.000webhostapp.com/api_elearn/api_elearn/courses/read.php?uid="+ user.getId();
+        String url = ApiUrl +"courses/read.php?uid="+ user.getId();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 if(response.has("records")){
                     try {
-
                     Gson gson = new Gson();
                     List<Course> courses = gson.fromJson(response.getString("records"), new TypeToken<List<Course>>(){}.getType());
                     triger.onResponse(courses);
@@ -73,6 +80,7 @@ public class WebApi implements API {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
                 triger.onError(error.getMessage());
             }
         });
@@ -84,7 +92,7 @@ public class WebApi implements API {
 
     @Override
     public void getAvaiableExams(final Course course, final IResponseTriger<List<Exam>> triger) {
-        String url = "http://alamamoon.000webhostapp.com/api_elearn/api_elearn/exams/read.php?cid="+ course.getId() + "&uid=" +SPController.loadLocalUser(mContext).getId();
+        String url = ApiUrl + "exams/read.php?cid="+ course.getId() + "&uid=" +SPController.loadLocalUser(mContext).getId();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -108,6 +116,7 @@ public class WebApi implements API {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
                 triger.onError(error.getMessage());
             }
         });
@@ -124,7 +133,7 @@ public class WebApi implements API {
 
     @Override
     public void getMessages(final Course course, final IResponseTriger<List<MSG>> triger) {
-        String url = "http://alamamoon.000webhostapp.com/api_elearn/api_elearn/messages/read.php?cid="+ course.getId() + "&from=" + SPController.loadLocalUser(mContext).getId();
+        String url = ApiUrl + "messages/read.php?cid="+ course.getId() + "&from=" + SPController.loadLocalUser(mContext).getId();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -148,6 +157,7 @@ public class WebApi implements API {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
                 triger.onError(error.getMessage());
             }
         });
@@ -159,7 +169,7 @@ public class WebApi implements API {
 
     @Override
     public void getHomeworks(final Course course, final IResponseTriger<List<HomeWork>> triger) {
-        String url = "http://alamamoon.000webhostapp.com/api_elearn/api_elearn/homework/read.php?cid="+ course.getId();
+        String url = ApiUrl + "homework/read.php?cid="+ course.getId();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -183,6 +193,7 @@ public class WebApi implements API {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
                 triger.onError(error.getMessage());
             }
         });
@@ -196,8 +207,9 @@ public class WebApi implements API {
     public void getExamQuestions(final Exam exam, final IResponseTriger<RunningExam> triger, Context context) {
         if (requestQueue==null)
             requestQueue = Volley.newRequestQueue(mContext);
-
-        String quesUrl = "http://alamamoon.000webhostapp.com/api_elearn/api_elearn/action/getq.php?s=" + exam.getId();
+        // default category
+        String cat = "0";
+        String quesUrl = ApiUrl + "action/getexamq.php?course_id=" + 1 + "&cat=" + cat;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, quesUrl, new Response.Listener<String>() {
             @Override
@@ -207,7 +219,7 @@ public class WebApi implements API {
                     if(jsonObject.has("records")){
 
                         Gson gson = new Gson();
-                        List<Ques> questions = gson.fromJson(response, new TypeToken<List<Ques>>(){}.getType());
+                        List<Ques> questions = gson.fromJson(jsonObject.getString("records"), new TypeToken<List<Ques>>(){}.getType());
 
                         RunningExam runningExam = new RunningExam();
                         runningExam.setParagraph(exam.getParagraph());
@@ -229,6 +241,7 @@ public class WebApi implements API {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
                 triger.onError(error.getMessage());
 
             }
@@ -242,7 +255,74 @@ public class WebApi implements API {
     }
 
     @Override
-    public void submitAnswers(List<Submission> submissions, IResponseTriger<Boolean> triger) {
+    public void submitAnswers(final List<Submission> submissions,final IResponseTriger<Boolean> triger) {
+        if (requestQueue==null)
+            requestQueue = Volley.newRequestQueue(mContext);
 
+        String quesUrl = ApiUrl + "submission/create.php";
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, quesUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d("tag",response);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    if(jsonObject.has("result")){
+                        triger.onResponse(true);
+                    }else
+                        triger.onResponse(true);
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    triger.onError(e.getMessage());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("tag","ERROR "+ error.toString());
+                triger.onError(error.toString());
+            }
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+
+                try {
+
+                    return listToJson(submissions).toString().getBytes("utf-8");
+                }catch (Exception e){triger.onError(e.getMessage());}
+                return super.getBody();
+            }
+            public String getBodyContentType()
+            {
+                return "application/json; charset=utf-8";
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> headers = new HashMap<>();
+                headers.put("Content-Type","application/json; charset=UTF-8");
+                headers.put("Access-Control-Max-Age","3600");
+                headers.put("Access-Control-Allow-Origin","*");
+                headers.put("Access-Control-Allow-Headers","Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+
+                return headers;
+            }
+        };
+        requestQueue.add(stringRequest);
+    }
+    private JSONArray listToJson(List<Submission> list){
+        JSONArray mJsonArray = new JSONArray();
+        try {
+
+            for (Submission submission:
+                    list) {
+                JSONObject mJsonObject = new JSONObject(submission.toString());
+                mJsonArray.put(mJsonObject);
+            }
+        }catch (Exception e){e.printStackTrace();return null;}
+        return mJsonArray;
     }
 }

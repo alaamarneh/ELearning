@@ -1,7 +1,9 @@
 package com.ala.elearning.fragments;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,9 @@ import com.ala.elearning.activities.ExamsListActivity;
 import com.ala.elearning.activities.HomeworkListActivity;
 import com.ala.elearning.activities.abstractActivities.DetailsActivity;
 import com.ala.elearning.activities.ExamResultsListActivity;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * Created by alaam on 12/30/2017.
@@ -35,7 +40,7 @@ public class CourseDetailFragment extends DetailsFragment<Course> {
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_course_detail, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_course_detail, container, false);
         tvCourseName = rootView.findViewById(R.id.tvCourseName);
         tvInstructorName = rootView.findViewById(R.id.tvInstructorName);
         tvSummary = rootView.findViewById(R.id.tvSummary);
@@ -61,6 +66,17 @@ public class CourseDetailFragment extends DetailsFragment<Course> {
             public void onClick(View view) {
                 Intent i = HomeworkListActivity.getIntent(getContext(),mItem);
                 startActivity(i);
+//                try{
+//                    File sdCard = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+//                    File file = new File(sdCard, "image.jpg");
+//                    FileOutputStream fos = new FileOutputStream(file);
+//
+//                rootView.setDrawingCacheEnabled(true);
+//                rootView.buildDrawingCache();
+//                Bitmap b = Bitmap.createBitmap(rootView.getDrawingCache());
+//                b.compress(Bitmap.CompressFormat.JPEG, 95, fos
+//);
+//                }catch (Exception e){e.printStackTrace();}
             }
         });
 

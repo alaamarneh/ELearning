@@ -40,7 +40,7 @@ public class CoursesListFragment extends ListFragment implements IResponseTriger
     }
     @Override
     public void setupRecyclerViewAdapter() {
-        API api = WebApi.getInstance(getActivity());
+        API api = WebApi.getInstance();
         api.getAvailableCourses(this);
         mSwipeRefreshLayout.setRefreshing(true);
     }
